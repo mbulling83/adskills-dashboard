@@ -57,7 +57,7 @@ Deno.serve(async (req) => {
   const { error: insertErr } = await supabase.from("skill_events").insert({
     org_id: tokenRow.org_id,
     skill_name: body.skill_name,
-    invoked_at: body.invoked_at ?? new Date().toISOString(),
+    invoked_at: new Date().toISOString(),
     metadata: body.metadata ?? null,
   });
 

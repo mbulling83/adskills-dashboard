@@ -22,27 +22,52 @@ export function TokenManager({
   const [newToken, setNewToken] = useState<string | null>(null);
   const [label, setLabel] = useState("");
   const [copied, setCopied] = useState(false);
+  const [generating, setGenerating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
   async function generate() {
-    const res = await fetch("/api/tokens", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ org_id: orgId, label: label || "Default" }),
-    });
-    const data = await res.json();
-    setNewToken(data.token);
-    setLabel("");
-    router.refresh();
+    if (generating) return;
+    setGenerating(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/tokens", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ org_id: orgId, label: label || "Default" }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error ?? "Failed to generate token");
+        return;
+      }
+      setNewToken(data.token);
+      setLabel("");
+      router.refresh();
+    } catch {
+      setError("Network error — please try again");
+    } finally {
+      setGenerating(false);
+    }
   }
 
   async function revoke(tokenId: string) {
-    await fetch("/api/tokens", {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ token_id: tokenId }),
-    });
-    router.refresh();
+    setError(null);
+    try {
+      const res = await fetch("/api/tokens", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token_id: tokenId }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error ?? "Failed to revoke token");
+        return;
+      }
+      router.refresh();
+    } catch {
+      setError("Network error — please try again");
+    }
   }
 
   function copyToken() {
@@ -56,9 +81,17 @@ export function TokenManager({
     <div className="space-y-4">
       {newToken && (
         <div className="p-3 bg-yellow-50 border border-yellow-200 rounded space-y-2">
-          <p className="text-sm font-semibold">
-            New token — copy now, shown once:
-          </p>
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-semibold">
+              New token — copy now, shown once:
+            </p>
+            <button
+              className="text-xs text-muted-foreground hover:underline"
+              onClick={() => setNewToken(null)}
+            >
+              Dismiss
+            </button>
+          </div>
           <div className="flex items-center gap-2">
             <code className="text-xs break-all flex-1">{newToken}</code>
             <Button size="sm" variant="outline" onClick={copyToken}>
@@ -68,6 +101,10 @@ export function TokenManager({
         </div>
       )}
 
+      {error && (
+        <p className="text-sm text-red-500">{error}</p>
+      )}
+
       <div className="flex gap-2">
         <Input
           placeholder="Token label"
@@ -75,8 +112,11 @@ export function TokenManager({
           onChange={(e) => setLabel(e.target.value)}
           className="max-w-xs"
           onKeyDown={(e) => e.key === "Enter" && generate()}
+          disabled={generating}
         />
-        <Button onClick={generate}>Generate Token</Button>
+        <Button onClick={generate} disabled={generating}>
+          {generating ? "Generating…" : "Generate Token"}
+        </Button>
       </div>
 
       <div className="space-y-2">
@@ -98,6 +138,7 @@ export function TokenManager({
                 size="sm"
                 variant="outline"
                 onClick={() => revoke(t.id)}
+                aria-label={`Revoke token ${t.label}`}
               >
                 Revoke
               </Button>
