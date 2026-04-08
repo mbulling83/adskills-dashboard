@@ -8,17 +8,20 @@ export default async function OrgDashboardPage() {
   const supabase = await createClient();
   const since = new Date(Date.now() - 30 * 86400000).toISOString();
 
+  // Read from session_events (telemetry system) — skill invocations only
   const { data: events } = await supabase
-    .from("skill_events")
-    .select("skill_name, invoked_at")
-    .gte("invoked_at", since)
-    .order("invoked_at", { ascending: true });
+    .from("session_events")
+    .select("skill_name, timestamp")
+    .eq("event_type", "skill_invocation")
+    .gte("timestamp", since)
+    .order("timestamp", { ascending: true });
 
   const byDay: Record<string, number> = {};
   const bySkill: Record<string, number> = {};
 
   for (const e of events ?? []) {
-    const day = e.invoked_at.slice(0, 10);
+    if (!e.skill_name) continue;
+    const day = (e.timestamp as string).slice(0, 10);
     byDay[day] = (byDay[day] ?? 0) + 1;
     bySkill[e.skill_name] = (bySkill[e.skill_name] ?? 0) + 1;
   }
