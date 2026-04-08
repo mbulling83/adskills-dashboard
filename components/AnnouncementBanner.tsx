@@ -35,11 +35,7 @@ export function AnnouncementBanner() {
         }
 
         // Record user visit
-        await fetch("/api/user/visit", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ user_id: user.id })
-        });
+        await fetch("/api/user/visit", { method: "POST" });
 
         // Fetch relevant announcements (uses session cookie automatically)
         const response = await fetch("/api/announcements");
@@ -60,15 +56,10 @@ export function AnnouncementBanner() {
 
   const handleDismiss = async (announcementId: string) => {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-
       await fetch("/api/announcements/dismiss", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          user_id: user?.id,
-          announcement_id: announcementId
-        })
+        body: JSON.stringify({ announcement_id: announcementId })
       });
 
       // Remove from local state

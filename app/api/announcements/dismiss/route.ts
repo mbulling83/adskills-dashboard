@@ -4,21 +4,22 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   try {
     const supabase = await createClient();
-    const body = await req.json();
-    const { user_id, announcement_id } = body;
 
-    if (!user_id || !announcement_id) {
-      return NextResponse.json(
-        { error: "user_id and announcement_id required" },
-        { status: 400 }
-      );
+    // Use session user — don't trust body for user_id
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+
+    const body = await req.json();
+    const { announcement_id } = body;
+
+    if (!announcement_id) {
+      return NextResponse.json({ error: "announcement_id required" }, { status: 400 });
     }
 
-    // Record announcement dismissal
     const { error } = await supabase
       .from("announcement_views")
       .upsert({
-        user_id,
+        user_id: user.id,
         announcement_id,
         viewed_at: new Date().toISOString(),
         dismissed_at: new Date().toISOString()

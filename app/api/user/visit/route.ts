@@ -1,21 +1,18 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: NextRequest) {
+export async function POST(_req: NextRequest) {
   try {
     const supabase = await createClient();
-    const body = await req.json();
-    const { user_id } = body;
 
-    if (!user_id) {
-      return NextResponse.json({ error: "user_id required" }, { status: 400 });
-    }
+    // Use the authenticated session user — don't trust body
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
-    // Record or update user visit
     const { error } = await supabase
       .from("user_visits")
       .upsert({
-        user_id,
+        user_id: user.id,
         visited_at: new Date().toISOString()
       }, {
         onConflict: "user_id"
