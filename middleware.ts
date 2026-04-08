@@ -6,7 +6,8 @@ function getRoleFromToken(accessToken: string): string | null {
     const payload = JSON.parse(
       Buffer.from(accessToken.split(".")[1], "base64url").toString()
     );
-    return payload.role ?? null;
+    // Role is stored in app_metadata by Supabase admin API
+    return payload.app_metadata?.role ?? null;
   } catch {
     return null;
   }
