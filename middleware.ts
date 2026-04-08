@@ -45,6 +45,11 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/auth/login", request.url));
   }
 
+  // Allow public access to signup page
+  if (pathname === "/auth/signup") {
+    return supabaseResponse;
+  }
+
   if (session) {
     const role = getRoleFromToken(session.access_token);
 
