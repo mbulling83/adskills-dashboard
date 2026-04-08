@@ -1,0 +1,10 @@
+#!/bin/sh
+# Run tests before every commit
+echo "Running tests..."
+npm test
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "Tests failed. Fix failing tests before committing."
+  exit 1
+fi
+echo "All tests passed."
