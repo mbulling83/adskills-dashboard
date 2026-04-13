@@ -39,11 +39,14 @@ export default async function AdminUsagePage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Usage — Last 30 Days</h1>
+      <div>
+        <h1 className="text-2xl font-semibold text-slate-900">Usage - Last 30 Days</h1>
+        <p className="mt-1 text-sm text-slate-500">Cross-org invocation volume and distribution.</p>
+      </div>
 
-      <Card>
+      <Card className="border border-slate-200 bg-white shadow-sm">
         <CardHeader>
-          <CardTitle>Daily Invocations</CardTitle>
+          <CardTitle className="text-sm font-semibold text-slate-900">Daily Invocations</CardTitle>
         </CardHeader>
         <CardContent>
           <UsageChart data={chartData} />
@@ -51,16 +54,16 @@ export default async function AdminUsagePage() {
       </Card>
 
       <div className="grid grid-cols-2 gap-4">
-        <Card>
+        <Card className="border border-slate-200 bg-white shadow-sm">
           <CardHeader>
-            <CardTitle>Top Skills</CardTitle>
+            <CardTitle className="text-sm font-semibold text-slate-900">Top Skills</CardTitle>
           </CardHeader>
           <CardContent>
             {topSkills.length > 0 ? (
               topSkills.map(([skill, count]) => (
-                <div key={skill} className="flex justify-between py-1 text-sm">
-                  <span className="font-mono">{skill}</span>
-                  <span className="font-bold">{count}</span>
+                <div key={skill} className="flex justify-between rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm">
+                  <span className="font-mono text-slate-700">{skill}</span>
+                  <span className="font-semibold text-slate-900">{count}</span>
                 </div>
               ))
             ) : (
@@ -68,16 +71,16 @@ export default async function AdminUsagePage() {
             )}
           </CardContent>
         </Card>
-        <Card>
+        <Card className="border border-slate-200 bg-white shadow-sm">
           <CardHeader>
-            <CardTitle>Most Active Orgs</CardTitle>
+            <CardTitle className="text-sm font-semibold text-slate-900">Most Active Orgs</CardTitle>
           </CardHeader>
           <CardContent>
             {topOrgs.length > 0 ? (
               topOrgs.map(([org, count]) => (
-                <div key={org} className="flex justify-between py-1 text-sm">
-                  <span>{org}</span>
-                  <span className="font-bold">{count}</span>
+                <div key={org} className="flex justify-between rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm">
+                  <span className="text-slate-700">{org}</span>
+                  <span className="font-semibold text-slate-900">{count}</span>
                 </div>
               ))
             ) : (

@@ -1,6 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import { Sparkles, Key, AlertTriangle } from "lucide-react";
-import Link from "next/link";
+import { AlertTriangle, Key } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 
@@ -15,154 +14,89 @@ export default async function OrgTokensPage() {
   const revokedTokens = tokens?.filter(t => t.revoked_at) ?? [];
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <header className="flex items-center justify-between border-b border-border py-6">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-foreground/15 bg-foreground text-background">
-              <Sparkles className="h-5 w-5" />
+    <section className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-semibold text-slate-900">API Tokens</h2>
+        <p className="mt-1 text-sm text-slate-500">
+          Manage tokens used to access AdSkills services.
+        </p>
+      </div>
+
+      {tokens && tokens.length > 0 ? (
+        <div className="grid gap-6 xl:grid-cols-2">
+          <Card className="border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="mb-4 flex items-center gap-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-md bg-slate-100">
+                <Key className="h-4 w-4 text-slate-700" />
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-slate-900">Active Tokens</p>
+                <p className="text-xs text-slate-500">{activeTokens.length} active</p>
+              </div>
             </div>
-            <div>
-              <p className="text-[0.64rem] uppercase tracking-[0.34em] text-muted-foreground">
-                AdSkills
-              </p>
-              <p className="text-sm font-medium">Dashboard</p>
-            </div>
-          </Link>
-
-          <nav className="flex items-center gap-6">
-            <Link
-              href="/dashboard"
-              className="text-sm font-medium text-muted-foreground hover:text-foreground"
-            >
-              Overview
-            </Link>
-            <Link
-              href="/dashboard/tokens"
-              className="text-sm font-medium text-foreground"
-            >
-              API Tokens
-            </Link>
-            <Link
-              href="/dashboard/analytics"
-              className="text-sm font-medium text-muted-foreground hover:text-foreground"
-            >
-              Analytics
-            </Link>
-            <Link
-              href="/dashboard/insights"
-              className="text-sm font-medium text-muted-foreground hover:text-foreground"
-            >
-              Insights
-            </Link>
-          </nav>
-        </header>
-
-        <div className="py-8">
-          {/* Page Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold tracking-tight">
-              API Tokens
-            </h1>
-            <p className="mt-2 text-muted-foreground">
-              Manage your API tokens for accessing AdSkills services
-            </p>
-          </div>
-
-          {tokens && tokens.length > 0 ? (
-            <div className="grid gap-8 lg:grid-cols-2">
-              {/* Active Tokens */}
-              <div className="space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/25">
-                    <Key className="h-4 w-4 text-accent" />
-                  </div>
+            <div className="space-y-2">
+              {activeTokens.map((t) => (
+                <div
+                  key={t.id}
+                  className="flex items-start justify-between rounded-md border border-slate-200 bg-slate-50 px-3 py-2"
+                >
                   <div>
-                    <p className="font-semibold">Active Tokens</p>
-                    <p className="text-sm text-muted-foreground">
-                      {activeTokens.length} active
+                    <p className="text-sm font-medium text-slate-900">{t.label}</p>
+                    <p className="text-xs text-slate-500">
+                      Created {new Date(t.created_at).toLocaleDateString()}
                     </p>
                   </div>
+                  <Badge className="bg-slate-900 text-white">Active</Badge>
                 </div>
+              ))}
+            </div>
+          </Card>
 
-                <div className="space-y-3">
-                  {activeTokens.map((t) => (
-                    <Card
-                      key={t.id}
-                      className="border-border/80 bg-card p-5 hover:border-accent/50 transition-colors"
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="space-y-1">
-                          <p className="font-semibold text-base">{t.label}</p>
-                          <p className="text-sm text-muted-foreground">
-                            Created {new Date(t.created_at).toLocaleDateString()}
-                          </p>
-                        </div>
-                        <Badge className="rounded-full bg-accent/20 text-accent px-3 py-1 text-xs">
-                          Active
-                        </Badge>
-                      </div>
-                    </Card>
-                  ))}
-                </div>
+          <Card className="border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="mb-4 flex items-center gap-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-md bg-slate-100">
+                <AlertTriangle className="h-4 w-4 text-slate-700" />
               </div>
-
-              {/* Revoked Tokens */}
-              {revokedTokens.length > 0 && (
-                <div className="space-y-4">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-muted/50">
-                      <AlertTriangle className="h-4 w-4 text-muted-foreground" />
-                    </div>
+              <div>
+                <p className="text-sm font-semibold text-slate-900">Revoked Tokens</p>
+                <p className="text-xs text-slate-500">{revokedTokens.length} revoked</p>
+              </div>
+            </div>
+            <div className="space-y-2">
+              {revokedTokens.length > 0 ? (
+                revokedTokens.map((t) => (
+                  <div
+                    key={t.id}
+                    className="flex items-start justify-between rounded-md border border-slate-200 bg-slate-50 px-3 py-2"
+                  >
                     <div>
-                      <p className="font-semibold">Revoked Tokens</p>
-                      <p className="text-sm text-muted-foreground">
-                        {revokedTokens.length} revoked
+                      <p className="text-sm font-medium text-slate-700">{t.label}</p>
+                      <p className="text-xs text-slate-500">
+                        Revoked {new Date(t.revoked_at!).toLocaleDateString()}
                       </p>
                     </div>
+                    <Badge variant="destructive">Revoked</Badge>
                   </div>
-
-                  <div className="space-y-3">
-                    {revokedTokens.map((t) => (
-                      <Card
-                        key={t.id}
-                        className="border-border/60 bg-muted/30 p-5 opacity-75"
-                      >
-                        <div className="flex items-start justify-between">
-                          <div className="space-y-1">
-                            <p className="font-semibold text-base text-muted-foreground">
-                              {t.label}
-                            </p>
-                            <p className="text-sm text-muted-foreground">
-                              Revoked {new Date(t.revoked_at!).toLocaleDateString()}
-                            </p>
-                          </div>
-                          <Badge variant="destructive" className="rounded-full px-3 py-1 text-xs">
-                            Revoked
-                          </Badge>
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
-                </div>
+                ))
+              ) : (
+                <p className="py-10 text-center text-sm text-slate-500">
+                  No revoked tokens.
+                </p>
               )}
             </div>
-          ) : (
-            /* Empty State */
-            <Card className="border-border/80 bg-card p-12">
-              <div className="flex flex-col items-center justify-center text-center">
-                <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full border-2 border-border bg-accent/25">
-                  <Key className="h-8 w-8 text-muted-foreground" />
-                </div>
-                <h2 className="text-2xl font-bold">No tokens yet</h2>
-                <p className="mt-4 max-w-md text-base text-muted-foreground">
-                  You don't have any API tokens yet. Contact your administrator to generate tokens for accessing AdSkills services.
-                </p>
-              </div>
-            </Card>
-          )}
+          </Card>
         </div>
-      </section>
-    </main>
+      ) : (
+        <Card className="border border-slate-200 bg-white p-12 text-center shadow-sm">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-md bg-slate-100">
+            <Key className="h-5 w-5 text-slate-700" />
+          </div>
+          <h3 className="text-lg font-semibold text-slate-900">No tokens yet</h3>
+          <p className="mt-2 text-sm text-slate-500">
+            Contact your administrator to generate API tokens.
+          </p>
+        </Card>
+      )}
+    </section>
   );
 }

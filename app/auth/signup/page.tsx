@@ -4,11 +4,11 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Sparkles, ArrowRight, CheckCircle2 } from "lucide-react";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card } from "@/components/ui/card";
+import { AuthShell } from "@/components/auth/AuthShell";
 
 export default function SignUpPage() {
   const supabase = createClient();
@@ -54,137 +54,108 @@ export default function SignUpPage() {
 
   if (success) {
     return (
-      <main className="min-h-screen bg-background text-foreground">
-        <div className="hero-grain pointer-events-none fixed inset-0 opacity-70" />
-        <section className="relative mx-auto min-h-screen max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex min-h-screen items-center justify-center py-12">
-            <Card className="w-full max-w-md border-border/80 bg-card/95 backdrop-blur p-8">
-              <div className="mb-8 flex justify-center">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full border-2 border-border bg-accent/25">
-                  <CheckCircle2 className="h-8 w-8 text-accent" />
-                </div>
-              </div>
-
-              <div className="mb-8 text-center">
-                <h1 className="text-2xl font-bold">Check your email</h1>
-                <p className="mt-2 text-muted-foreground">
-                  We've sent a confirmation link to
-                </p>
-                <p className="mt-1 font-medium text-foreground">{email}</p>
-                <p className="mt-4 text-sm text-muted-foreground">
-                  Click the link in the email to activate your account.
-                </p>
-              </div>
-
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => router.push("/auth/login")}
-              >
-                Back to sign in
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Card>
+      <AuthShell
+        title="Check your email"
+        description="We sent a confirmation link to finish setting up your account."
+      >
+        <div className="mb-6 flex justify-center">
+          <div className="flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100">
+            <CheckCircle2 className="h-7 w-7 text-emerald-700" />
           </div>
-        </section>
-      </main>
+        </div>
+
+        <div className="mb-6 text-center">
+          <p className="text-sm text-slate-500">Confirmation sent to</p>
+          <p className="mt-1 font-medium text-slate-900">{email}</p>
+          <p className="mt-3 text-sm text-slate-500">
+            Click the link in that email to activate your account.
+          </p>
+        </div>
+
+        <Button
+          variant="outline"
+          className="h-10 w-full rounded-md border-slate-300 bg-white hover:bg-slate-50"
+          onClick={() => router.push("/auth/login")}
+        >
+          Back to sign in
+          <ArrowRight className="ml-2 h-4 w-4" />
+        </Button>
+      </AuthShell>
     );
   }
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <div className="hero-grain pointer-events-none fixed inset-0 opacity-70" />
-      <section className="relative mx-auto min-h-screen max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex min-h-screen items-center justify-center py-12">
-          <Card className="w-full max-w-md border-border/80 bg-card/95 backdrop-blur p-8">
-            <div className="mb-8">
-              <Link href="/" className="mb-6 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full border border-foreground/15 bg-foreground text-background">
-                  <Sparkles className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-[0.68rem] uppercase tracking-[0.34em] text-muted-foreground">
-                    AdSkills
-                  </p>
-                  <p className="text-base font-medium">Dashboard</p>
-                </div>
-              </Link>
-
-              <div className="mt-8">
-                <h1 className="text-2xl font-bold">Create your account</h1>
-                <p className="mt-2 text-muted-foreground">
-                  Get started with AdSkills Dashboard
-                </p>
-              </div>
-            </div>
-
-            <form onSubmit={handleSignUp} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  autoComplete="email"
-                  placeholder="you@example.com"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  autoComplete="new-password"
-                  placeholder="At least 6 characters"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="confirm-password">Confirm Password</Label>
-                <Input
-                  id="confirm-password"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                  autoComplete="new-password"
-                  placeholder="Same as above"
-                />
-              </div>
-
-              {error && (
-                <div className="rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-                  {error}
-                </div>
-              )}
-
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={loading}
-              >
-                {loading ? "Creating account…" : "Create account"}
-                {!loading && <ArrowRight className="ml-2 h-4 w-4" />}
-              </Button>
-            </form>
-
-            <div className="mt-6 text-center">
-              <p className="text-sm text-muted-foreground">
-                Already have an account?{" "}
-                <Link href="/auth/login" className="font-medium text-foreground hover:underline">
-                  Sign in
-                </Link>
-              </p>
-            </div>
-          </Card>
+    <AuthShell
+      title="Create your account"
+      description="Set up your workspace and start tracking skill performance."
+    >
+      <form onSubmit={handleSignUp} className="space-y-5">
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            autoComplete="email"
+            placeholder="you@example.com"
+            className="border-slate-300 bg-white"
+          />
         </div>
-      </section>
-    </main>
+
+        <div className="space-y-2">
+          <Label htmlFor="password">Password</Label>
+          <Input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            autoComplete="new-password"
+            placeholder="At least 6 characters"
+            className="border-slate-300 bg-white"
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="confirm-password">Confirm password</Label>
+          <Input
+            id="confirm-password"
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+            autoComplete="new-password"
+            placeholder="Repeat your password"
+            className="border-slate-300 bg-white"
+          />
+        </div>
+
+        {error && (
+          <div className="rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">
+            {error}
+          </div>
+        )}
+
+        <Button
+          type="submit"
+          className="h-10 w-full rounded-md bg-slate-900 text-white hover:bg-slate-800"
+          disabled={loading}
+        >
+          {loading ? "Creating account…" : "Create account"}
+          {!loading && <ArrowRight className="ml-2 h-4 w-4" />}
+        </Button>
+      </form>
+
+      <div className="mt-6 text-center">
+        <p className="text-sm text-slate-500">
+          Already have an account?{" "}
+          <Link href="/auth/login" className="font-medium text-slate-900 hover:underline">
+            Sign in
+          </Link>
+        </p>
+      </div>
+    </AuthShell>
   );
 }

@@ -14,20 +14,25 @@ export default async function OrgsPage() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Organisations</h1>
+        <div>
+          <h1 className="text-2xl font-semibold text-slate-900">Organisations</h1>
+          <p className="mt-1 text-sm text-slate-500">
+            Manage tenant organizations and access.
+          </p>
+        </div>
         <CreateOrgForm />
       </div>
-      <div className="space-y-2">
+      <div className="space-y-3">
         {orgs?.map((org) => (
-          <Card key={org.id}>
+          <Card key={org.id} className="border border-slate-200 bg-white shadow-sm">
             <CardContent className="flex items-center justify-between py-4">
               <div>
-                <p className="font-medium">{org.name}</p>
-                <p className="text-xs text-muted-foreground">
+                <p className="font-medium text-slate-900">{org.name}</p>
+                <p className="text-xs text-slate-500">
                   {new Date(org.created_at).toLocaleDateString()}
                 </p>
               </div>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="border-slate-300 bg-white hover:bg-slate-50">
                 <Link href={`/admin/orgs/${org.id}`}>Manage</Link>
               </Button>
             </CardContent>

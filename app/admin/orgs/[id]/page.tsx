@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { TokenManager } from "./TokenManager";
+import { Card } from "@/components/ui/card";
 
 export default async function OrgDetailPage({
   params,
@@ -26,34 +27,39 @@ export default async function OrgDetailPage({
 
   return (
     <div className="space-y-8">
-      <h1 className="text-2xl font-bold">{org?.name}</h1>
+      <div>
+        <h1 className="text-2xl font-semibold text-slate-900">{org?.name}</h1>
+        <p className="mt-1 text-sm text-slate-500">Organization details and recent activity.</p>
+      </div>
 
       <section>
-        <h2 className="text-lg font-semibold mb-3">API Tokens</h2>
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">API Tokens</h2>
         <TokenManager orgId={id} tokens={tokens ?? []} />
       </section>
 
       <section>
-        <h2 className="text-lg font-semibold mb-3">Recent Activity</h2>
+        <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-500">Recent Activity</h2>
         {events && events.length > 0 ? (
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left text-muted-foreground">
-                <th className="py-1">Skill</th>
-                <th>Time</th>
-              </tr>
-            </thead>
-            <tbody>
-              {events.map((e, i) => (
-                <tr key={i} className="border-t">
-                  <td className="py-2 font-mono">{e.skill_name}</td>
-                  <td className="text-muted-foreground">
-                    {new Date(e.invoked_at).toLocaleString()}
-                  </td>
+          <Card className="overflow-hidden border border-slate-200 bg-white shadow-sm">
+            <table className="w-full text-sm">
+              <thead className="border-b border-slate-200 bg-slate-50">
+                <tr className="text-left">
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500">Skill</th>
+                  <th className="px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500">Time</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {events.map((e, i) => (
+                  <tr key={i} className="border-t border-slate-100">
+                    <td className="px-4 py-2 font-mono text-slate-800">{e.skill_name}</td>
+                    <td className="px-4 py-2 text-slate-500">
+                      {new Date(e.invoked_at).toLocaleString()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Card>
         ) : (
           <p className="text-sm text-muted-foreground">No activity yet.</p>
         )}

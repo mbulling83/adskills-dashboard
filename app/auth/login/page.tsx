@@ -4,11 +4,11 @@ import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Sparkles, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card } from "@/components/ui/card";
+import { AuthShell } from "@/components/auth/AuthShell";
 
 export default function LoginPage() {
   const supabase = createClient();
@@ -32,86 +32,63 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <div className="hero-grain pointer-events-none fixed inset-0 opacity-70" />
-      <section className="relative mx-auto min-h-screen max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex min-h-screen items-center justify-center py-12">
-          <Card className="w-full max-w-md border-border/80 bg-card/95 backdrop-blur p-8">
-            <div className="mb-8">
-              <Link href="/" className="mb-6 flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full border border-foreground/15 bg-foreground text-background">
-                  <Sparkles className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="text-[0.68rem] uppercase tracking-[0.34em] text-muted-foreground">
-                    AdSkills
-                  </p>
-                  <p className="text-base font-medium">Dashboard</p>
-                </div>
-              </Link>
-
-              <div className="mt-8">
-                <h1 className="text-2xl font-bold">Sign in to your account</h1>
-                <p className="mt-2 text-muted-foreground">
-                  Enter your credentials to access your dashboard
-                </p>
-              </div>
-            </div>
-
-            <form onSubmit={handleLogin} className="space-y-6">
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  autoComplete="email"
-                  placeholder="you@example.com"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  autoComplete="current-password"
-                  placeholder="••••••••"
-                />
-              </div>
-
-              {error && (
-                <div className="rounded-lg border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-                  {error}
-                </div>
-              )}
-
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={loading}
-              >
-                {loading ? "Signing in…" : "Sign in"}
-                {!loading && <ArrowRight className="ml-2 h-4 w-4" />}
-              </Button>
-            </form>
-
-            <div className="mt-6 text-center">
-              <p className="text-sm text-muted-foreground">
-                Don't have an account?{" "}
-                <Link href="/auth/signup" className="font-medium text-foreground hover:underline">
-                  Sign up
-                </Link>
-              </p>
-            </div>
-          </Card>
+    <AuthShell
+      title="Sign in to your account"
+      description="Access your skills dashboard and operational insights."
+    >
+      <form onSubmit={handleLogin} className="space-y-5">
+        <div className="space-y-2">
+          <Label htmlFor="email">Email</Label>
+          <Input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            autoComplete="email"
+            placeholder="you@example.com"
+            className="border-slate-300 bg-white"
+          />
         </div>
-      </section>
-    </main>
+
+        <div className="space-y-2">
+          <Label htmlFor="password">Password</Label>
+          <Input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            autoComplete="current-password"
+            placeholder="••••••••"
+            className="border-slate-300 bg-white"
+          />
+        </div>
+
+        {error && (
+          <div className="rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">
+            {error}
+          </div>
+        )}
+
+        <Button
+          type="submit"
+          className="h-10 w-full rounded-md bg-slate-900 text-white hover:bg-slate-800"
+          disabled={loading}
+        >
+          {loading ? "Signing in…" : "Sign in"}
+          {!loading && <ArrowRight className="ml-2 h-4 w-4" />}
+        </Button>
+      </form>
+
+      <div className="mt-6 text-center">
+        <p className="text-sm text-slate-500">
+          Don&apos;t have an account?{" "}
+          <Link href="/auth/signup" className="font-medium text-slate-900 hover:underline">
+            Sign up
+          </Link>
+        </p>
+      </div>
+    </AuthShell>
   );
 }

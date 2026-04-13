@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { Users, Search, Shield, Building2, UserCheck, UserX, ChevronDown } from "lucide-react";
+import { Users, Search, Shield, Building2, UserCheck, UserX } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -102,15 +102,15 @@ export default function AdminUsersPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2">
-            <Users className="h-6 w-6" />
+          <h1 className="flex items-center gap-2 text-2xl font-semibold text-slate-900">
+            <Users className="h-6 w-6 text-slate-700" />
             Users
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="mt-1 text-sm text-slate-500">
             Assign users to organisations and manage roles
           </p>
         </div>
-        <div className="flex items-center gap-3 text-sm text-muted-foreground">
+        <div className="flex items-center gap-3 text-sm text-slate-500">
           <span>{adminCount} admin{adminCount !== 1 ? "s" : ""}</span>
           <span>·</span>
           <span>{orgCount} org users</span>
@@ -127,27 +127,25 @@ export default function AdminUsersPage() {
         <p className="text-sm text-destructive bg-destructive/10 px-4 py-2 rounded-md">{error}</p>
       )}
 
-      {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
         <input
-          className="w-full rounded-md border border-border bg-background pl-9 pr-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-accent"
+          className="w-full rounded-md border border-slate-300 bg-white py-2 pr-4 pl-9 text-sm focus:outline-none focus:ring-2 focus:ring-slate-300"
           placeholder="Search by email or org..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
 
-      {/* Table */}
-      <Card className="border-border/80 overflow-hidden">
+      <Card className="overflow-hidden border border-slate-200 bg-white shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
-            <thead className="border-b border-border bg-muted/30">
+            <thead className="border-b border-slate-200 bg-slate-50">
               <tr>
-                <th className="text-left px-4 py-3 font-medium text-muted-foreground">User</th>
-                <th className="text-left px-4 py-3 font-medium text-muted-foreground">Role</th>
-                <th className="text-left px-4 py-3 font-medium text-muted-foreground">Organisation</th>
-                <th className="text-left px-4 py-3 font-medium text-muted-foreground">Last seen</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">User</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Role</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Organisation</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">Last seen</th>
                 <th className="px-4 py-3"></th>
               </tr>
             </thead>
@@ -172,12 +170,12 @@ export default function AdminUsersPage() {
                   return (
                     <tr
                       key={user.id}
-                      className="border-b border-border/50 last:border-0 hover:bg-muted/20 transition-colors"
+                      className="border-b border-slate-100 transition-colors hover:bg-slate-50"
                     >
                       {/* Email */}
                       <td className="px-4 py-3">
                         <div className="flex items-center gap-2">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/15 text-accent text-xs font-semibold flex-shrink-0">
+                          <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-slate-200 text-xs font-semibold text-slate-700">
                             {user.email[0].toUpperCase()}
                           </div>
                           <div>
@@ -216,7 +214,7 @@ export default function AdminUsersPage() {
                         <div className="flex items-center gap-2">
                           <Building2 className="h-3.5 w-3.5 text-muted-foreground flex-shrink-0" />
                           <select
-                            className="text-sm bg-transparent border-0 focus:outline-none focus:ring-1 focus:ring-accent rounded px-1 py-0.5 min-w-0 max-w-[180px]"
+                            className="min-w-0 max-w-[180px] rounded border border-slate-300 bg-white px-2 py-1 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-300"
                             value={user.app_metadata?.org_id || ""}
                             disabled={isSaving}
                             onChange={(e) => assignOrg(user.id, e.target.value || null)}

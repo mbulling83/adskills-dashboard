@@ -125,9 +125,6 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-image:
-      radial-gradient(circle at top left, color-mix(in oklch, var(--color-accent) 14%, transparent), transparent 28%),
-      radial-gradient(circle at 88% 14%, color-mix(in oklch, var(--color-foreground) 8%, transparent), transparent 24%);
     min-height: 100vh;
   }
   ::selection {

@@ -1,8 +1,8 @@
 import { createClient } from "@/lib/supabase/server";
 import { UsageChart } from "@/components/UsageChart";
-import { Sparkles, BarChart3, TrendingUp } from "lucide-react";
-import Link from "next/link";
+import { BarChart3, TrendingUp, Zap } from "lucide-react";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 export default async function OrgDashboardPage() {
   const supabase = await createClient();
@@ -33,161 +33,83 @@ export default async function OrgDashboardPage() {
   const topSkills = Object.entries(bySkill).sort((a, b) => b[1] - a[1]);
   const totalInvocations = events?.length ?? 0;
   const activeSkills = topSkills.length;
+  const avgDailyUsage = chartData.length
+    ? Math.round(totalInvocations / chartData.length)
+    : 0;
 
   return (
-    <main className="min-h-screen bg-background text-foreground">
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <header className="flex items-center justify-between border-b border-border py-6">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-foreground/15 bg-foreground text-background">
-              <Sparkles className="h-5 w-5" />
-            </div>
-            <div>
-              <p className="text-[0.64rem] uppercase tracking-[0.34em] text-muted-foreground">
-                AdSkills
-              </p>
-              <p className="text-sm font-medium">Dashboard</p>
-            </div>
-          </Link>
+    <section className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-semibold text-slate-900">Overview</h2>
+        <p className="mt-1 text-sm text-slate-500">
+          Last 30 days of skill invocation activity.
+        </p>
+      </div>
 
-          <nav className="flex items-center gap-6">
-            <Link
-              href="/dashboard"
-              className="text-sm font-medium text-foreground"
-            >
-              Overview
-            </Link>
-            <Link
-              href="/dashboard/tokens"
-              className="text-sm font-medium text-muted-foreground hover:text-foreground"
-            >
-              API Tokens
-            </Link>
-            <Link
-              href="/dashboard/analytics"
-              className="text-sm font-medium text-muted-foreground hover:text-foreground"
-            >
-              Analytics
-            </Link>
-            <Link
-              href="/dashboard/insights"
-              className="text-sm font-medium text-muted-foreground hover:text-foreground"
-            >
-              Insights
-            </Link>
-          </nav>
-        </header>
+      <div className="grid gap-4 md:grid-cols-3">
+        <Card className="border border-slate-200 bg-white p-5 shadow-sm">
+          <p className="text-xs uppercase tracking-wide text-slate-500">
+            Total Invocations
+          </p>
+          <div className="mt-3 flex items-center justify-between">
+            <p className="text-3xl font-semibold text-slate-900">{totalInvocations}</p>
+            <BarChart3 className="h-5 w-5 text-slate-500" />
+          </div>
+        </Card>
 
-        <div className="py-8">
-          {/* Page Header */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold tracking-tight">
-              Your Usage — Last 30 Days
-            </h1>
-            <p className="mt-2 text-muted-foreground">
-              Track your skill invocations and performance metrics
+        <Card className="border border-slate-200 bg-white p-5 shadow-sm">
+          <p className="text-xs uppercase tracking-wide text-slate-500">
+            Active Skills
+          </p>
+          <div className="mt-3 flex items-center justify-between">
+            <p className="text-3xl font-semibold text-slate-900">{activeSkills}</p>
+            <TrendingUp className="h-5 w-5 text-slate-500" />
+          </div>
+        </Card>
+
+        <Card className="border border-slate-200 bg-white p-5 shadow-sm">
+          <p className="text-xs uppercase tracking-wide text-slate-500">
+            Avg Daily Usage
+          </p>
+          <div className="mt-3 flex items-center justify-between">
+            <p className="text-3xl font-semibold text-slate-900">{avgDailyUsage}</p>
+            <Zap className="h-5 w-5 text-slate-500" />
+          </div>
+        </Card>
+      </div>
+
+      <div className="grid gap-6 xl:grid-cols-[2fr_1fr]">
+        <Card className="border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-slate-900">Skill Use Over Time</h3>
+            <Badge variant="outline" className="border-slate-300 text-slate-600">
+              30D
+            </Badge>
+          </div>
+          <UsageChart data={chartData} />
+        </Card>
+
+        <Card className="border border-slate-200 bg-white p-6 shadow-sm">
+          <h3 className="mb-4 text-sm font-semibold text-slate-900">Top Skills</h3>
+          {topSkills.length > 0 ? (
+            <div className="space-y-2">
+              {topSkills.slice(0, 8).map(([skill, count]) => (
+                <div
+                  key={skill}
+                  className="flex items-center justify-between rounded-md border border-slate-200 bg-slate-50 px-3 py-2"
+                >
+                  <p className="truncate text-sm text-slate-700">{skill}</p>
+                  <p className="ml-3 text-sm font-semibold text-slate-900">{count}</p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="py-8 text-center text-sm text-slate-500">
+              No usage data available yet.
             </p>
-          </div>
-
-          {/* Stats Grid */}
-          <div className="grid gap-6 sm:grid-cols-3 mb-8">
-            <Card className="border-border/80 bg-card p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">
-                    Total Invocations
-                  </p>
-                  <p className="mt-2 text-4xl font-bold">{totalInvocations}</p>
-                </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-full border border-border bg-accent/25">
-                  <BarChart3 className="h-5 w-5" />
-                </div>
-              </div>
-            </Card>
-
-            <Card className="border-border/80 bg-card p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">
-                    Active Skills
-                  </p>
-                  <p className="mt-2 text-4xl font-bold">{activeSkills}</p>
-                </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-full border border-border bg-accent/25">
-                  <TrendingUp className="h-5 w-5" />
-                </div>
-              </div>
-            </Card>
-
-            <Card className="border-border/80 bg-card p-6">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">
-                    Status
-                  </p>
-                  <p className="mt-2 text-4xl font-bold">Active</p>
-                </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-full border border-border bg-accent/25">
-                  <Sparkles className="h-5 w-5" />
-                </div>
-              </div>
-            </Card>
-          </div>
-
-          {/* Main Content Grid */}
-          <div className="grid gap-6 lg:grid-cols-2">
-            {/* Chart */}
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold">Daily Activity</h2>
-              <Card className="border-border/80 bg-card p-6">
-                <UsageChart data={chartData} />
-              </Card>
-            </div>
-
-            {/* Top Skills */}
-            <div className="space-y-4">
-              <h2 className="text-lg font-semibold">Top Skills</h2>
-              <Card className="border-border/80 bg-card p-6">
-                {topSkills.length > 0 ? (
-                  <div className="space-y-3">
-                    {topSkills.slice(0, 10).map(([skill, count], index) => (
-                      <div
-                        key={skill}
-                        className="flex items-center justify-between rounded-lg border border-border bg-background/50 p-4 hover:border-accent/50 hover:bg-accent/5 transition-colors"
-                      >
-                        <div className="flex items-center gap-4">
-                          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-accent/25 text-sm font-medium">
-                            {index + 1}
-                          </div>
-                          <div>
-                            <p className="font-mono text-sm font-medium">{skill}</p>
-                          </div>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-2xl font-bold">{count}</p>
-                          <p className="text-xs text-muted-foreground">
-                            calls
-                          </p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center py-12 text-center">
-                    <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full border-2 border-border bg-accent/25">
-                      <Sparkles className="h-8 w-8 text-muted-foreground" />
-                    </div>
-                    <p className="text-lg font-medium">No activity yet</p>
-                    <p className="mt-2 max-w-sm text-sm text-muted-foreground">
-                      Start using skills to see your usage data here
-                    </p>
-                  </div>
-                )}
-              </Card>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
+          )}
+        </Card>
+      </div>
+    </section>
   );
 }
